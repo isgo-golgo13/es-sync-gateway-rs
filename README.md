@@ -77,7 +77,7 @@ es-sync-gateway-rs/
 - **Bulk Operations**: Batched ES writes with retry and dead-letter queue
 - **Observability**: Prometheus metrics, structured logging, health endpoints
 
-## Components
+## Service Components
 
 | Binary | Description | Deployment |
 |--------|-------------|------------|
@@ -89,9 +89,9 @@ es-sync-gateway-rs/
 |---------|-------------|
 | `es-gateway-core` | Shared traits, types, Strategy pattern abstractions |
 
----
 
-## Quick Start
+
+## Starter Kit
 
 ### Prerequisites
 
