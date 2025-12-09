@@ -1,0 +1,28 @@
+[package]
+name = "es-gateway-core"
+description = "Core types, traits, and utilities for ES Sync Gateway"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+tokio = { workspace = true }
+async-trait = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+metrics = { workspace = true }
+uuid = { workspace = true }
+chrono = { workspace = true }
+bytes = { workspace = true }
+futures = { workspace = true }
+config = { workspace = true }
+url = { workspace = true }
+
+[dev-dependencies]
+tokio-test = { workspace = true }

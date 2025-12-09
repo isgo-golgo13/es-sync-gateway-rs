@@ -1,0 +1,115 @@
+# ES Sync Gateway Configuration
+# All values can be overridden via environment variables with ES_GATEWAY_ prefix
+# Template: ES_GATEWAY_WATCHER__ELASTICSEARCH__HOSTS=http://es1:9200,http://es2:9200
+
+watcher:
+  elasticsearch:
+    hosts:
+      - "https://es-gcp.iconik.io:9200"
+    # username: "elastic"
+    # password: "${ES_PASSWORD}"
+    # api_key: "${ES_API_KEY}"
+    connect_timeout: "10s"
+    request_timeout: "30s"
+    verify_certs: true
+    # ca_cert_path: "/etc/ssl/certs/es-ca.pem"
+
+  nats:
+    url: "nats://nats-gateway.internal:4222"
+    connection_name: "es-watcher-gcp"
+    reconnect_attempts: -1  # infinite
+    reconnect_delay: "2s"
+    # credentials_path: "/etc/nats/creds"
+
+  jetstream:
+    stream: "ES_CHANGES"
+    subject_prefix: "es"
+
+  index_patterns:
+    - "iconik-*"
+  
+  poll_interval: "100ms"
+  batch_size: 1000
+  tenant: "iconik"
+
+  checkpoint:
+    storage_type: "file"
+    path: "/var/lib/es-sync-gateway/checkpoint"
+    flush_interval: "1s"
+
+gateway:
+  nats:
+    listen: "0.0.0.0:4222"
+    cluster_name: "es-sync-gateway"
+    jetstream:
+      store_dir: "/data/jetstream"
+      max_memory: "64MB"
+
+  filters:
+    - type: index
+      include:
+        - assets
+        - metadata
+        - users
+      exclude_patterns:
+        - "logs"
+        - "temp_*"
+        - "*.staging"
+    
+    - type: operation
+      include:
+        - index
+        - update
+      # Exclude deletes from sync
+      exclude:
+        - delete
+
+  admin:
+    enabled: true
+    listen: "0.0.0.0:8080"
+
+writer:
+  nats:
+    url: "nats://nats-gateway.internal:4222"
+    connection_name: "es-writer-aws"
+
+  jetstream:
+    stream: "ES_CHANGES"
+    consumer: "aws-eu-north-1"
+    filter_subjects:
+      - "es.iconik.assets.*"
+      - "es.iconik.metadata.*"
+      - "es.iconik.users.*"
+    max_ack_pending: 10000
+    ack_wait: "30s"
+
+  elasticsearch:
+    hosts:
+      - "https://es-aws.iconik.io:9200"
+    connect_timeout: "10s"
+    request_timeout: "30s"
+
+  bulk:
+    size: 1000
+    max_bytes: 5242880  # 5MB
+    flush_interval: "100ms"
+    concurrency: 4
+
+  dlq:
+    enabled: true
+    path: "/data/dlq"
+    max_size: 100000
+
+  retry:
+    max_attempts: 3
+    initial_backoff: "100ms"
+    max_backoff: "10s"
+    multiplier: 2.0
+
+observability:
+  metrics:
+    enabled: true
+    endpoint: "0.0.0.0:9090"
+  
+  log_level: "info"
+  log_format: "json"

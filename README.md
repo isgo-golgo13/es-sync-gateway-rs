@@ -162,3 +162,16 @@ es-sync-gateway-rs/
             └── dlq.rs                  # Dead letter queue
 ```
 
+
+## Embedded Mode Configuration
+
+```shell
+# External NATS (default)
+./nats-gateway --upstream-url nats://external:4222
+
+# Embedded NATS (Firecracker)
+./nats-gateway --embedded \
+  --store-dir /data/jetstream \
+  --js-max-memory 64MB \
+  --nats-listen 0.0.0.0:4222
+```

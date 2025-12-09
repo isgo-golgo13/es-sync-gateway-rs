@@ -1,0 +1,44 @@
+[package]
+name = "nats-gateway"
+description = "NATS gateway with filtering for ES Sync Gateway (Firecracker-ready)"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+
+[[bin]]
+name = "nats-gateway"
+path = "src/main.rs"
+
+[dependencies]
+es-gateway-core = { workspace = true }
+
+tokio = { workspace = true }
+async-trait = { workspace = true }
+async-nats = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+metrics = { workspace = true }
+metrics-exporter-prometheus = { workspace = true }
+futures = { workspace = true }
+bytes = { workspace = true }
+clap = { workspace = true }
+config = { workspace = true }
+
+# HTTP server for admin API
+axum = "0.7"
+tower-http = { version = "0.5", features = ["cors", "trace"] }
+
+# Unix signal handling for embedded mode
+[target.'cfg(unix)'.dependencies]
+nix = { version = "0.29", features = ["signal", "process"] }
+libc = "0.2"
+
+[dev-dependencies]
+tokio-test = { workspace = true }
