@@ -18,7 +18,7 @@ es-sync-gateway-rs/
     │       ├── lib.rs                  # Exports + prelude
     │       ├── error.rs                # GatewayError enum
     │       ├── message.rs              # Envelope, ChangeEvent, DocumentOperation
-    │       ├── strategy.rs             # Strategy traits (ChangeSource, MessageSink, Writer, etc.)
+    │       ├── strategy.rs             # Strategy traits (ChangeSource, MessageSink, Writer, ...)
     │       ├── filter.rs               # IndexFilter, OperationFilter, FilterChain
     │       ├── config.rs               # All configuration structs
     │       └── metrics.rs              # Prometheus metrics
@@ -38,7 +38,7 @@ es-sync-gateway-rs/
     │   └── src/
     │       ├── lib.rs                  # Gateway orchestrator
     │       ├── main.rs                 # CLI with --embedded flag
-    │       ├── embedded.rs             # ★ NEW: Embedded NATS server subprocess
+    │       ├── embedded.rs             # Embedded NATS server subprocess
     │       ├── filter_engine.rs        # Filter chain builder
     │       ├── transform.rs            # Message transformers
     │       ├── admin_api.rs            # Axum HTTP admin API
