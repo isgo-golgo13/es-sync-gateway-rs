@@ -163,6 +163,58 @@ es-sync-gateway-rs/
 ```
 
 
+## Building the Project
+
+```shell
+make help              # Show all targets
+
+# Development
+make build             # Debug build
+make release           # Release build (native)
+make check             # Cargo check
+make test              # Run tests
+
+# Code Quality
+make fmt               # Format code
+make clippy            # Run lints
+make lint              # fmt-check + clippy
+make audit             # Security audit
+
+# Static Builds (Firecracker)
+make musl              # x86_64 static binary
+make musl-arm          # aarch64 static binary
+
+# Distribution
+make dist              # Create release package
+make dist-musl         # Create musl package
+make tarball           # Create .tar.gz release
+
+# Docker
+make docker-build      # Build all images
+make docker-push       # Push to registry
+
+# Firecracker
+make firecracker-rootfs
+make firecracker-kernel
+
+# Local Dev
+make dev-up            # Start NATS + ES stack
+make dev-down          # Stop stack
+make run-watcher       # Run watcher (debug)
+make run-gateway       # Run gateway (debug)
+make run-gateway-embedded  # Run with embedded NATS
+
+# Install
+make install           # Install to /usr/local/bin
+make uninstall
+
+# CI
+make ci                # fmt-check + clippy + test
+make ci-full           # ci + audit
+```
+
+
+
 ## Embedded Mode Configuration
 
 ```shell
