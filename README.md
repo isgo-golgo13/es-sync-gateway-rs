@@ -485,18 +485,3 @@ firectl --kernel firecracker/vmlinux \
   --nats-listen 0.0.0.0:4222
 ```
 
-
-
-
-## License
-
-Licensed under either of:
-
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE))
-- MIT license ([LICENSE-MIT](LICENSE-MIT))
-
-at your option.
-
-## Development Owners
-
-**EngineVector** - [https://enginevector.io](https://enginevector.io)
