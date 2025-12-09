@@ -105,3 +105,60 @@ Cross-Cloud Elasticsearch (Self-Hosted) to AWS Elasticsearch Doc Indexing Sync S
 
     Components: 3 (single binary) | Queue Hops: 1 | Latency: <10ms | Language: Rust
 ```
+
+
+
+## Project Structure
+
+```shell
+es-sync-gateway-rs/
+├── Cargo.toml                          # Workspace root (orchestrates all crates)
+├── README.md
+├── config/
+│   └── example.yaml
+│
+└── crates/
+    ├── es-gateway-core/                # Shared abstractions
+    │   ├── Cargo.toml
+    │   └── src/
+    │       ├── lib.rs                  # Exports + prelude
+    │       ├── error.rs                # GatewayError enum
+    │       ├── message.rs              # Envelope, ChangeEvent, DocumentOperation
+    │       ├── strategy.rs             # Strategy traits (ChangeSource, MessageSink, Writer, etc.)
+    │       ├── filter.rs               # IndexFilter, OperationFilter, FilterChain
+    │       ├── config.rs               # All configuration structs
+    │       └── metrics.rs              # Prometheus metrics
+    │
+    ├── es-watcher/                      # Binary: ES → NATS publisher
+    │   ├── Cargo.toml
+    │   └── src/
+    │       ├── lib.rs                  # Watcher orchestrator
+    │       ├── main.rs                 # CLI entry point
+    │       ├── source.rs               # PollingSource (ChangeSource impl)
+    │       ├── es_client.rs            # Elasticsearch HTTP client
+    │       ├── publisher.rs            # NatsJetStreamSink (MessageSink impl)
+    │       └── checkpoint.rs           # FileCheckpoint, MemoryCheckpoint
+    │
+    ├── nats-gateway/                    # Binary: Filter/router (Firecracker)
+    │   ├── Cargo.toml
+    │   └── src/
+    │       ├── lib.rs                  # Gateway orchestrator
+    │       ├── main.rs                 # CLI with --embedded flag
+    │       ├── embedded.rs             # ★ NEW: Embedded NATS server subprocess
+    │       ├── filter_engine.rs        # Filter chain builder
+    │       ├── transform.rs            # Message transformers
+    │       ├── admin_api.rs            # Axum HTTP admin API
+    │       └── server.rs               # (placeholder for future embedded NATS)
+    │
+    └── es-writer/                       # Binary: NATS → ES bulk writer
+        ├── Cargo.toml
+        └── src/
+            ├── lib.rs                  # EsWriter orchestrator
+            ├── main.rs                 # CLI entry point
+            ├── consumer.rs             # NatsJetStreamSource (MessageSource impl)
+            ├── batcher.rs              # Time/size triggered batching
+            ├── bulk_writer.rs          # BulkWriter (Writer impl)
+            ├── retry.rs                # Exponential backoff
+            └── dlq.rs                  # Dead letter queue
+```
+
