@@ -91,9 +91,8 @@ es-sync-gateway-rs/
 
 
 
-## Starter Kit
 
-### Prerequisites
+## Prerequisites
 
 - Rust 1.83+
 - NATS Server with JetStream (or use embedded mode)
