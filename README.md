@@ -561,3 +561,13 @@ AWS Bare Metal Instance (e.g., i3.metal, c5.metal)
 | GCP Interconnect + AWS Direct Connect  | `~5-10ms`    | $$$$ | High (physical cross-connect) |
 | VPN (IPsec Tunnels)                    | `~20-50ms`   | $$   | Medium                        |
 | Public Internet + mTLS                 | `~30-100ms`  | $    | Low                           |
+
+
+
+## References
+
+- Synadia (NATS Cloud) 
+synadia.com
+
+- Firecracker VMM
+https://firecracker-microvm.github.io/
