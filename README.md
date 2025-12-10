@@ -485,3 +485,79 @@ firectl --kernel firecracker/vmlinux \
   --nats-listen 0.0.0.0:4222
 ```
 
+
+
+
+## Network Topology
+
+```
+GCP                                      AWS
+┌─────────────────────┐                ┌─────────────────────────────────┐
+│                     │                │                                 │
+│  ┌───────────────┐  │                │  ┌───────────────────────────┐  │
+│  │  Source ES    │  │                │  │     Firecracker microVM   │  │
+│  │(Elasticsearch)│  │                │  │  ┌─────────┬───────────┐ │  │
+│  └───────┬───────┘  │                │  │  │  NATS   │  Gateway  │ │  │
+│          │          │                │  │  │ Server  │  Filter   │ │  │
+│          ▼          │   VPN / CLOUD  │  │  └────┬────┴─────┬─────┘ │  │
+│  ┌───────────────┐  │   INTERCONNECT │  │       │          │       │  │
+│  │  es-watcher   │  │                │  └───────┼──────────┼───────┘  │
+│  │  (publisher)  │──┼───────────────►│          │          │          │
+│  └───────────────┘  │    :4222       │          │          │          │
+│                     │                │          ▼          │          │
+│                     │                │  ┌───────────────┐  │          │
+│                     │                │  │  es-writer    │◄─┘          │
+│                     │                │  │  (consumer)   │             │
+│                     │                │  └───────┬───────┘             │
+│                     │                │          │                     │
+│                     │                │          ▼                     │
+│                     │                │  ┌───────────────┐             │
+│                     │                │  │  Target ES    │             │
+│                     │                │  │ (OpenSearch)  │             │
+│                     │                │  └───────────────┘             │
+└─────────────────────┘                └─────────────────────────────────┘
+```
+
+
+# es-watcher Connects to Gateway over VPN
+```
+es-watcher --nats-url nats://10.128.0.50:4222  # Private IP over VPN
+```
+
+## Postional Placement of Each Service
+
+| Binary                    | Location                      | Why                                   |
+|---------------------------|-------------------------------|---------------------------------------|
+| `es-watcher`              | GCP VM (or GKE pod)           | Near source ES, minimize read latency |
+| `nats-gateway --embedded` | AWS Firecracker               | Near target, broker + filter in one   |
+| `es-writer`               | AWS (same VPC as Firecracker) | Local to broker and target ES         |
+
+
+**Rule:** Place the broker near the writer - writes are latency-sensitive hungry than reads.
+
+
+
+## Firecracker Hosting on AWS
+
+Firecracker runs on **bare metal EC2** (not regular EC2 - you need hardware virtualization):
+```
+AWS Bare Metal Instance (e.g., i3.metal, c5.metal)
+├── Firecracker VMM
+│   └── microVM 1: nats-gateway --embedded
+│   └── microVM 2: (spare capacity)
+│   └── microVM N: (multi-tenant if needed)
+```
+
+- Firecracker runs on AWS EC2 (bare metal)
+    - Near target ES, low-write latency, AWS native networking
+    - IF runs on GCP near source ES, writes across VPN (slow)~20-50ms~20-50ms
+    - IF runs On-Prem, full-control offerings, two-cloud hops, increased latency, higher SRE ops work
+
+
+## Network Interconnect (Cross-Cloud) Configuration Options
+
+| Option                                 | Latency      | Cost |  Complexity                   |
+|----------------------------------------|--------------|------|-------------------------------|
+| GCP Interconnect + AWS Direct Connect  | `~5-10ms`    | $$$$ | High (physical cross-connect) |
+| VPN (IPsec Tunnels)                    | `~20-50ms`   | $$   | Medium                        |
+| Public Internet + mTLS                 | `~30-100ms`  | $    | Low                           |
