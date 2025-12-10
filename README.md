@@ -550,7 +550,7 @@ AWS Bare Metal Instance (e.g., i3.metal, c5.metal)
 
 - Firecracker runs on AWS EC2 (bare metal)
     - Near target ES, low-write latency, AWS native networking
-    - IF runs on GCP near source ES, writes across VPN (slow)~20-50ms~20-50ms
+    - IF runs on GCP near source ES, writes across VPN (slow)
     - IF runs On-Prem, full-control offerings, two-cloud hops, increased latency, higher SRE ops work
 
 
