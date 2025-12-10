@@ -9,7 +9,7 @@ es-sync-gateway-rs/
 ├── Cargo.toml                          # Workspace root (orchestrates all crates)
 ├── README.md
 ├── config/
-│   └── example.yaml
+│   └── template.yaml
 │
 └── crates/
     ├── es-gateway-core/                # Shared abstractions
