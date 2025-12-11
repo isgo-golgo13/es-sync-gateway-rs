@@ -566,7 +566,7 @@ AWS Bare Metal Instance (e.g., i3.metal, c5.metal)
 ## References
 
 - Synadia (NATS Cloud) 
-synadia.com
+https://www.synadia.com/
 
 - Firecracker VMM
 https://firecracker-microvm.github.io/
