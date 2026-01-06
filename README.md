@@ -1,11 +1,11 @@
-# ES Sync Gateway Service (Rust) 
+# ElasticSearch Sync Gateway Service (Rust) 
 Cross-Cloud Elasticsearch (Self-Hosted) to AWS Elasticsearch Doc Indexing Sync Service using Rust, NATS Jetstream and Firecracker VMM. Designed for AWS Firecracker MicroVMs, this service provides sub-ms latency with low resource footprint.
 
 
 ## Project Structure
 
 ```shell
-es-sync-gateway-rs/
+elasticsearch-sync-gateway-rs/
 ├── Cargo.toml                          # Workspace root (orchestrates all crates)
 ├── README.md
 ├── config/
